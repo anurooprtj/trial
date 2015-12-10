@@ -1,0 +1,9 @@
+
+{% block reviewform %}
+<p><strong>Review Post</strong></p>
+<form action="{{ url reviews:reviewadd restaurantObject.id}}" method="POST">
+Review:<input type="text" name="rtext">
+Rating:<input type="number" name="rrating">
+<input type="submit" value="POST">
+</form>
+{% endblock %}

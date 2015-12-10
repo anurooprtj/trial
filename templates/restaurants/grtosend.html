@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<h1>django chart trial</h1>
+<head>
+ <script type = "text/javascript" src = "{% static 'js/jquery-1.11.2.js' %}"></script>
+        <script type = "text/javascript" src = "{% static 'js/flot/jquery.flot.js' %}"></script>
+        <script type = "text/javascript" src = "{% static 'js/flot/jquery.flot.time.js' %}"></script>
+        <script type = "text/javascript" src = "{% static 'js/flot/jquery.flot.axislabels.js' %}"></script>
+        <script type = "text/javascript" src = "{% static 'js/flot/jquery.flot.symbol.js' %}"></script>
+
+<body>
+     <p class="tab"><font size=28 color="red">- Tank Water Level - </font></p>
+</body>
+
+
+
+
+
+
+
+<script>
+var data1 = [ <!--paste ur data here-->
+];
+
+
+
+
+
+var dataset = [
+    {
+        label: "Your data heading",
+        data: data1,
+        yaxis: 2,
+        color: "#FF0000",
+        points: { symbol: "circle", fillColor: "#FF0000", show: true },
+        lines: { show: true }
+    }
+];
+
+xaxis: {
+    ticks: []
+}
+
+yaxes: [{
+        position: "left",
+        color: "black",
+        axisLabel: "yaxislabel",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Verdana, Arial',
+        axisLabelPadding: 3
+    },
+]
+
+legend: {
+    noColumns: 0,
+    labelFormatter: function (label, series) {
+        return "<font color=\"white\">" + label + "</font>";
+    },            
+    backgroundColor: "#000",
+    backgroundOpacity: 0.9,
+    labelBoxBorderColor: "#000000",
+    position: "nw"
+}
+ 
+grid: {
+    hoverable: true,
+    borderWidth: 3,
+    mouseActiveRadius: 50,
+    backgroundColor: { colors: ["#ffffff", "#EDF5FF"] },
+    axisMargin: 20
+}
+
+$(document).ready(function () {
+    $.plot($("#flot-placeholder"), dataset, options);
+    $("#flot-placeholder").UseTooltip();
+});
+
+</script>
+</html>

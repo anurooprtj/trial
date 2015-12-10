@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+<html lang = "en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>{% block head_title %}{% endblock %}</title>
+    {% block extra_head %}
+    {% endblock %}
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="{% static 'css/normalize.css'%}">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+  </head>
+  <body>
+  <nav class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation" style = "padding-right:5vh; padding-bottom:.5vh; padding-top:.5vh;">
+  <div class="navbar-header">
+        <a class="navbar-brand" style = "padding:0px;" rel="home" href=""><img src="{% static 'images/foodjoint_logo.png'%}"></a>
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+    <span class="sr-only">Toggle navigation</span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    </button>
+  </div>
+  <div class="collapse navbar-collapse">
+    {% if user.is_authenticated %}
+
+              <ul class="nav navbar-nav navbar-right c-navbar-loggedin">
+
+                <!--<li class="c-dp-wrap"><a href="#"><img src="{% static 'images/dp.png' %}"></a></li>-->
+                <li>
+                  <a class="c-dp-name" href="#">Hi {{ user.username}}</a>
+                  <li class="dropdown c-account-info-btn">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My Account <span class="caret c-red-color"></span></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="/thefoodjoint/accounts/profile/">My Profile</a></li>
+                        <li><a href="/thefoodjoint/dealhistory/">Purchase History</a></li>
+                        <li><a href="/thefoodjoint/accounts/logout/">Logout</a></li>
+                        <!-- <li class="divider"></li> -->
+                      </ul>
+                  </li>
+                  
+                </li>
+              </ul>
+              {% else %}
+                <ul class="nav navbar-nav navbar-right">
+                <!--<li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Cochin <span class="caret c-red-color"></span></a>
+                  
+                </li>-->
+                <li><a href="/thefoodjoint/accounts/login" class="btn c-btn">Login</a></li>
+                
+              </ul>
+              {% endif %}
+
+    
+    
+  </div>
+</nav>
+    <div class="container-fluid">
+    <div class = "col-md-4 col-md-offset-4">
+    <div class = "panel panel-default">
+    {% block body %}
+      <!--
+    {% if messages %}
+    <div>
+      <strong>Messages:</strong>
+      <ul>
+	{% for message in messages %}
+	<li>{{message}}</li>
+	{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    -->
+
+    <!--
+    <div>
+      <strong>Menu:</strong>
+      <ul>
+	{% if user.is_authenticated %}
+	<li><a href="{% url 'account_email' %}">Change E-mail</a></li>
+	<li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+	{% else %}
+	<li><a href="{% url 'account_login' %}">Sign In</a></li>
+	<li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+	{% endif %}
+      </ul>
+    </div>
+    -->
+    {% block content %}
+    {% endblock %}
+    {% endblock %}
+    {% block extra_body %}
+    {% endblock %}
+    </div>
+    </div>
+    </div>
+  </body>
+</html>

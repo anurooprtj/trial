@@ -1,0 +1,282 @@
+
+{% extends 'main.html'%}
+{% block pageTitle %}
+{{restaurantObject.restaurantName}}
+{% endblock %}
+
+{% block sidePanel %}
+<style>
+
+#img{
+  overflow: hidden;
+}
+</style>
+<h3>{{restaurantObject.restaurantName}}</h3>
+{{checkInCount}} foodies were here !
+<hr>
+ 
+ {% block graph %}
+ <a href="/restaurants/viewgraph/sample/">view the graph</a>
+ {% endblock%}
+
+<div class="panel panel-default">
+	<div class = "panel-body">
+		<a href = "/profiles/{{restaurantObject.id}}/check-in/"><button class = "btn" >Check-In</button></a>
+
+	</div>
+</div>
+
+<div class="panel panel-default">
+
+<div class="panel-heading">
+<i class = "glyphicon glyphicon-map-marker"></i> Location
+</div>
+<div class = "panel-body">
+	{% for each in address %}
+		{{each}}	<br>
+	{% endfor %}
+</div>
+	
+</div>
+<div class="panel panel-default">
+	<div class = "panel-heading">
+		Contact Info
+	</div>
+	<div class = "panel-body">
+		<label><i class = "glyphicon glyphicon-phone-alt"></i>: </label>{{restaurantObject.restaurantContact}}<br>
+		<a href="{{restaurantObject.restaurantWebsite}}"><i class = "glyphicon glyphicon-globe"></i>: Website</a>
+		<br>
+		<a href="{{restaurantObject.restaurantFBLink}}"><i class="fa fa-facebook-square"></i>: FaceBook</a>
+
+	</div>
+
+
+</div>
+
+
+
+{% endblock %}
+
+
+{% block pageBody %}
+
+
+<div class="col-md-12 col-sm-12">
+<div class="well" id="reviews">
+  <h3 class="text-danger"></h3>
+
+{% for img in restaurantObject.reviewimages_set.all %}
+   <div id="img">
+   <img src="{{img.ReviewImage.url}}" class="img-rounded" width="100"  style="float: left; width: 30%; margin-right: 1%; margin-bottom: 0.5em;">
+   </div>
+{% endfor %}
+
+</div>
+</div>
+
+<div class="col-md-12 col-sm-12" >
+
+
+   <div class="well" id="reviews">
+
+
+<h3 class="text-info"><strong>Review Post</strong></h3>
+<form class="form-horizontal" role="form" enctype="multipart/form-data" action="{% url 'reviews:reviewadd' restaurantObject.id %}" method="post">
+{% csrf_token %}
+<label class="control-label  text-warning" for="review">Review:</label>
+<textarea class="form-control" name="rtext"></textarea><br><br>
+
+<label class="text-warning">SHARE images:</label>
+<input type="file" name="image" multiple><br>
+
+<label class="control-label  text-warning" for="rating">Rating:</label>
+<input class="form-control" type="number" name="rrating"><br>
+
+<input type="submit" class="btn btn-primary" value="POST">
+</form>
+	
+  </div>
+
+{% for each in reviews %}
+<div class="well" id="reviews">
+  <div class = "row">
+	
+	 <div class="col-sm-12 col-xs-12 col-md-12">
+		<h4><a href="{% url 'profiles:viewProfile' each.reviewedBy.username %}">{{each.reviewedBy.username}}</a></h4>
+
+    
+    
+
+
+
+
+        <ul class="list-inline">
+    <p class="text-warning small">{{each.reviewedBy.restaurantreview_set.count}} reviews, 'some' followers</p>
+		<p>{{each.reviewText}}</p>
+       <div class="well">
+        {% if each.reviewimages_set.count %}
+           {% for img in each.reviewimages_set.all %}
+           
+           <a data-toggle="modal" data-target="#mymodal{{img.id}}"><p><img src="{{img.ReviewImage.url}} " class="img-rounded" width="130" ></p></a>
+           <div id="mymodal{{img.id}}" role="dialog" class="modal fade">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 class="text-info capitalize">{{restaurantObject.restaurantName}}</h2>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>  
+              <div class="modal-body">  
+                  <div class="well"style="width:600px; float:left;"><img src="{{img.ReviewImage.url}}" class="img-rounded" width="500" ></div>
+
+                  <div style="margin-left: 620px;"> 
+                    <form action="{% url 'reviews:imgcommentadd' img.id %}" role="form" class="form-horizontal" method="post">{% csrf_token%}
+                      <label class="control-label text-warning" for="comment">Comment:</label>
+                      <input type="text" class="form-control" name="imgcomment"></input>
+                      <br>
+                       <input type="submit" class="btn btn-primary btn-sm" value="POST">
+                    </form>
+                    {% for imgcommentobj in img.imgcomments_set.all %}
+                      <div class="well">
+                        <p class="text-info">Comment:{{imgcommentobj.imgcomment}}</p>
+                        <p class="text-info"> By:{{imgcommentobj.commentBy.username}}</p>
+                      </div>
+                      {% endfor %}
+
+                  </div>
+              </div>
+
+              <div class="modal-footer" style="position:relative;">
+                <button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+              </div>
+          </div>
+        </div>
+      </div>
+
+           {% endfor %}
+        {% else %}
+            <p class="text-danger">None</p>
+         {% endif %}   
+       </div>
+
+      
+
+     
+
+
+		<p class="pull-right"><a href="#"><i class="glyphicon glyphicon-share"></i> Share</a></p>
+        <ul class="list-inline">
+        <li>{{each.reviewedOn | date}}</li>     
+       <li><a href="{% url 'reviews:reviewfull' each.id restaurantObject.id %}"><i class="glyphicon glyphicon-comment"></i> {{each.reviewreply_set.count}} comments</a></li>
+           
+        
+          {% if user.is_authenticated %}  
+           
+                 {% if each in likedreviews %}
+          
+                  <li><a href = "{% url 'reviews:hedislikes' each.id  each.reviewedBy.id  1 %}" ><i class = "glyphicon glyphicon-thumbs-up"></i>  {{each.likeCount}} Unlike</a></li>
+           
+                  {% else %}
+                   <li><a href = "{% url 'reviews:helikes'  each.id  each.reviewedBy.id  1 %}"><i class = "glyphicon glyphicon-thumbs-up"></i>  {{each.likeCount}} Likes</a></li>
+                   {% endif %}
+           
+           {% else %}
+
+                <li><a href = "/accounts/login"><i class = "glyphicon glyphicon-thumbs-up"></i>  {{each.likeCount}} Likes</a></li>
+
+            {% endif%}  
+             
+
+
+     </div>
+     
+
+        <form action="{% url 'reviews:commentadd' each.id restaurantObject.id %}" method="post">{% csrf_token%}
+        	Comment:<input type="text" placeholder="comment here" name="rcomment">
+        	<input type="submit" value="comment">
+        </form>
+        </ul>
+ </div>
+</div>
+{% endfor %}
+</div>
+
+
+{% endblock %}
+
+{% block rightPanel %}
+<script src="https://maps.googleapis.com/maps/api/js">
+	
+</script>
+<script type="text/javascript">
+	function initialize() {
+      var myLatlng = new google.maps.LatLng({{restaurantObject.restaurantMapLocation}});
+        
+      var mapOptions = {
+        zoom: 12,
+        center: myLatlng
+      }
+   	  var canvas = document.getElementById('canvas');
+      var map = new google.maps.Map(canvas, mapOptions);
+
+      var marker = new google.maps.Marker({
+          position: myLatlng,
+          map: map,
+          title: 'This Marker'
+      });
+    }	
+    google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+<style type="text/css">
+	#canvas{
+		
+		height: 40vh;
+	}
+</style>
+
+<div class = "panel panel-default">
+<div id = "canvas"></div>
+</div>
+<div class = "panel panel-default">
+<div class = "panel-heading">
+Top Foodies at {{restaurantObject.restaurantName}}
+	
+</div>
+<div class = "panel-body">
+
+	   {% block topfoodieslist %}
+
+      {% for each in topfoodies%}
+      <a href="#" >{{each.username}}</a>
+      <br>
+      {% endfor %}
+
+
+     {% endblock%}
+
+</div> 
+</div>
+<hr>
+<div class = "panel panel-default">
+	<div class = "panel-heading">
+
+		Nearby Restaurants	
+	</div>
+	<div class = "panel-body">
+
+      {%  for each in nearbyrestobj %}
+        <a href="/restaurants/viewrestaurant/{{each.id}}/"><p class="text-info">{{each.restaurantName}}</p></a>
+     {% endfor%}
+
+
+
+
+  </div>
+
+</div>
+<hr>
+
+
+
+{% endblock %}
+
+

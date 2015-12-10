@@ -1,0 +1,160 @@
+{% extends 'main.html'%}
+
+{% block pageTitle %}
+{{restaurantObject.restaurantName}}
+{% endblock %}
+{% block sidePanel %}
+
+<h3>{{restaurantObject.restaurantName}}</h3>
+<hr>
+<div class="panel panel-default">
+
+<div class="panel-heading">
+<i class = "glyphicon glyphicon-map-marker"></i> Location
+</div>
+<div class = "panel-body">
+	{% for each in address %}
+		{{each}}	<br>
+	{% endfor %}
+</div>
+	
+</div>
+<div class="panel panel-default">
+	<div class = "panel-heading">
+		Contact Info
+	</div>
+	<div class = "panel-body">
+		<label><i class = "glyphicon glyphicon-phone-alt"></i>: </label>{{restaurantObject.restaurantContact}}<br>
+		<a href="{{restaurantObject.restaurantWebsite}}"><i class = "glyphicon glyphicon-globe"></i>: Website</a>
+		<br>
+		<a href="{{restaurantObject.restaurantFBLink}}"><i class="fa fa-facebook-square"></i>: Facebook</a>
+
+	</div>
+
+</div>
+
+
+
+{% endblock %}
+
+{% block pageBody %}
+
+
+<div class="well" id="maincon">        
+
+Review:<strong>{{review.reviewText}}</strong><br>
+Rating:<strong>{{review.reviewRating}}</strong><br>
+ReviewedBy:<strong>{{review.reviewedBy.username}}</strong><br>
+On:<strong>{{ review.reviewedOn | date}}</strong>
+
+
+<br>
+<a href="{% url 'reviews:reviewfull' review.id restaurantObject.id   %}"><i class="glyphicon glyphicon-comment"></i> {{review.reviewreply_set.count}} comments</a>
+
+{% if user.is_authenticated %}
+        {% if review in likedreviews %}
+          
+         <li><a href = "{% url 'reviews:hedislikes'  review.id  review.reviewedBy.id  0 %}"><i class = "glyphicon glyphicon-thumbs-up"></i>  {{review.likeCount}} Unlike</a></li>
+           
+        {% else %}
+         <li><a href = "{% url 'reviews:helikes'  review.id  review.reviewedBy.id  0 %}"><i class = "glyphicon glyphicon-thumbs-up"></i>  {{review.likeCount}} Likes</a></li>
+
+       {% endif %}
+{% else %}
+
+ <li><a href = "/accounts/login"><i class = "glyphicon glyphicon-thumbs-up"></i>  {{review.likeCount}} Likes</a></li>
+ 
+{% endif %}      
+</div> 
+
+<div class="panel" id="maincon">
+	<h4>COMMENTS</h4>
+
+{% for comments in review.reviewreply_set.all %}
+<li>
+	
+<strong>Comment:</strong>{{comments.replyText}}<br>
+<strong>By:</strong>{{comments.repliedBy}}<br>
+<strong>On:</strong>{{comments.repliedOn|date}}<br>
+</li>
+   
+
+{% endfor %}
+
+</div>
+
+<form action="{% url 'reviews:commentadd' review.id restaurantObject.id %}" method="post">{% csrf_token%}
+        	Comment:<input type="text" placeholder="comment here" name="rcomment">
+        	<input type="submit" value="comment">
+</form>
+
+
+
+
+
+
+
+{% endblock %}
+
+{% block rightPanel %}
+<script src="https://maps.googleapis.com/maps/api/js">
+	
+</script>
+<script type="text/javascript">
+	function initialize() {
+      var myLatlng = new google.maps.LatLng({{restaurantObject.restaurantMapLocation}});
+        
+      var mapOptions = {
+        zoom: 12,
+        center: myLatlng
+      }
+   	  var canvas = document.getElementById('canvas');
+      var map = new google.maps.Map(canvas, mapOptions);
+
+      var marker = new google.maps.Marker({
+          position: myLatlng,
+          map: map,
+          title: 'This Marker'
+      });
+    }	
+    google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+<style type="text/css">
+	#canvas{
+		
+		height: 40vh;
+	}
+</style>
+
+<div class = "panel panel-default">
+<div id = "canvas"></div>
+</div>
+<div class = "panel panel-default">
+<div class = "panel-heading">
+Top Foodies at {{restaurantObject.restaurantName}}
+	
+</div>
+<div class = "panel-body">
+	
+</div> 
+</div>
+<hr>
+<div class = "panel panel-default">
+	<div class = "panel-heading">
+		Nearby Restaurants		
+	</div>
+	<div class = "panel-body">
+     {%  for each in nearbyrestobj %}
+        <a href="/restaurants/viewrestaurant/{{each.id}}/"><p class="text-info">{{each.restaurantName}}</p></a>
+     {% endfor%}
+
+
+	</div>
+</div>
+<hr>
+
+
+
+{% endblock %}
+
+   

@@ -1,0 +1,228 @@
+{% extends 'main.html' %}
+{% load staticfiles %}
+
+<!-- left panel -->
+{% block sidePanel %}
+
+<img src="{% static 'images/anon_user.png' %}">
+<h3>{{profileObject.username}}</h3>
+<hr>
+<div class="panel panel-default">
+<ul id = "leftLink" class="list-unstyled">
+	<li id = "basicInfoButton"><a>Basic Information</a></li>
+	<li id = "accountSettingsButton"><a> Account Settings</a></li>
+	<li id = "termsOfServiceButton"><a>Terms of Service</a></li>
+</ul>
+
+</div>
+
+
+{% endblock %}
+
+
+<!-- main body -->
+{% block pageBody%}
+<div id = "basicInfo" class = "container">
+	<h3>Basic Information</h3>
+	<form action = "/profiles/createProfile/" method = "POST" class = "form-inline">
+		{% csrf_token %}
+		<div class = "form-group">
+		<label for = "firstname">First Name</label>
+		<input type = "text" class = "form-control" name = "firstname" placeholder = "First Name">
+					
+		
+		</div>
+		<div class="form-group">
+			<label for = "midddlename">Middle Name:</label>
+			<input type="text" class = "form-control" name = "middlename" placeholder = "Middle Name">
+			
+		</div>
+		<p>
+		</p>
+		<div class="form-group">
+			<label for="lastaname">Last Name:</label>
+			<input type = "text" class="form-control" name = "lastname" placeholder = "Last Name">
+		</div>
+		<p></p>
+		<button type = "submit" class = "btn btn-success" id = "nameSave">Save</button>
+	</form>
+				<p></p>
+				<form action  = "/profiles/savePhone/" method  = "POST" class = "form-inline">
+				{% csrf_token %}
+				<div class = "form-group">
+				
+				<label for = "contact">Contact No</label>
+				<input type = "text" name = "contact"  class = "form-control"   id = "phoneNumber" placeholder = "+91 xxxx xxxx xx"></input>
+				</div>
+				
+				<input type = "button" id = "verifyPhone" class = "btn btn-info" value = "Verify Phone Number">
+				<p></p>
+				<button type = "submit" class = "btn btn-success" id = "contactinfoSave">Save</button>
+				&nbsp;<a class = "btn btn-warning" href = "/thefoodjoint/accounts/profile/">Cancel</a>
+				</form>
+			</div>
+			<div id = "accountSettings" class = "container">
+			<h3>Account Settings</h3>
+		
+
+				<h4>Change Password</h4>
+				<form action = "/accounts/password/change/" method = "POST" class = "form-inline">
+				{% csrf_token %}
+				<div class = "form-group">
+				<label for = "current">Current Password</label>
+				<input type = "password" class = "form-control" name = "oldpassword"  placeholder = "Current Password" required>
+				</div>
+				<p></p>
+				<div class = "form-group">
+				
+				<label class = "control-label" for = "new">New Password</label>
+				<input type = "password" name = "password1"  class = "form-control" placeholder = "newpassword" id = "password" required>
+				</div>
+				
+				<div class = "form-group" id = "confirmDiv">
+				
+				<label for = "confirm_password" class = "control-label">Confirm Password</label>
+				<input type = "password" name = "password2"  class = "form-control" placeholder = "Confirm Password" id = "confirm_password" required>
+
+				</div>
+				
+				<div>
+				<br>	
+				<button type = "submit" class = "btn btn-success" id = "passwordChange">Save</button>
+				&nbsp;<a class = "btn btn-warning" href = "/profiles/delete/">Cancel</a>
+				</div>
+				</form>
+
+				<h4>Delete Account</h4>
+				<button class= "btn btn-danger" href = "/profiles/delete/">Delete My Account</button>
+			</div>
+			<div id = "termsOfService" class = "container col-md-12">
+			<h3>Terms of service</h3>
+			<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text 
+			ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only
+ 			five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 
+			1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing 
+			software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+			</div>
+
+
+     
+	
+{% endblock %}
+
+
+<!-- right panel -->
+{% block rightPanel %}
+
+{% endblock %}
+
+
+{% block styles %}
+<style type = "text/css">
+	a:hover{
+		text-decoration:none;
+	}	
+	#leftLink li{	
+	padding-top:.5em;
+	padding-bottom:.5em;
+	
+	}
+	
+	#leftLink li{
+		padding:.3em;
+	}
+	#leftLink li:hover{
+		
+		cursor:pointer;
+		
+		background-color:#999999;
+	}
+	
+#accountSettings{
+	padding-bottom:2em;
+}
+#termsOfService{
+	padding-bottom:2em;
+}
+#basicInfo{
+	padding-top:2em;
+}
+	
+    </style>
+	
+{% endblock %}
+
+{% block scripts %}
+<script src = "{% static 'js/verify2.js' %}"></script>
+
+<script type="text/javascript">
+    
+    
+
+
+    $(document).ready(function(){
+    var verifyButton = document.getElementById("verifyPhone");
+	$('#passwordChange').prop("disabled", true);
+    $('#accountSettings').css('display','none'); 
+	$('#termsOfService').css('display','none');
+	$('#contactinfoSave').prop("disabled", true);
+
+        
+
+
+
+      $('#basicInfoButton').click(function(){
+		$('#accountSettings').css('display','none'); 
+		$('#termsOfService').css('display','none');
+		$('#basicInfo').css('display','inherit');
+		
+	});
+     $('#accountSettingsButton').click(function(){
+		$('#accountSettings').css('display','inherit'); 
+		$('#termsOfService').css('display','none');
+		$('#basicInfo').css('display','none');
+	});
+    $('#termsOfServiceButton').click(function(){
+		$('#accountSettings').css('display','none'); 
+		$('#termsOfService').css('display','inherit');
+		$('#basicInfo').css('display','none');
+	});	
+	var password = document.getElementById("password"),
+    	confirm_password = document.getElementById("confirm_password");
+    	password.onchange = validatePassword;
+    	confirm_password.onkeyup = validatePassword;
+	function validatePassword() {
+		var parent = document.getElementById('confirmDiv');
+
+  		if (password.value != confirm_password.value) {
+			parent.className = "form-group has-error has-feedback";
+				$('#passwordChange').prop("disabled", true);
+
+    
+  		} else {
+			parent.className = "form-group has-success has-feedback";
+			$('#passwordChange').prop("disabled", false);
+    
+  		}
+	}
+
+
+	verifyButton.onclick = function(){
+			
+			var phoneNumber = document.getElementById("phoneNumber").value;
+			var verification = verifyNumber(phoneNumber);
+			if(verification){
+					$('#contactinfoSave').prop("disabled", false);
+					var verifiedButton = document.getElementById("verifyPhone");
+					verifiedButton.value = "Verified";
+			}
+			else{
+					alert("sorry Code error !");
+				
+			}	
+		};
+    });
+    
+
+    </script>	
+{% endblock %}

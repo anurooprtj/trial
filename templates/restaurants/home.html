@@ -1,0 +1,111 @@
+{% extends 'main.html'%}
+{% block pageTitle %}
+Home Page
+{% endblock %}
+{% block sidePanel %}
+		<form action="/restaurants/filter" methog = "GET" id = "myForm">
+		<input name = "featureFilters" id = "featureFilters" type = "hidden">
+		<input name = "cusineFilters" id = "cusineFilters" type = "hidden">
+		<input name "location" id = "locationFilter" type = "hidden">
+
+		</form>
+		<h3>Cuisines</h3>
+    	<div class="panel panel-default">
+         	<li><input type = "checkbox" id  = "American" class = "cusineFilter filterElement" value = "americanCusine">American</li>
+         	<li><input type = "checkbox" id  = "American" class = "cusineFilter filterElement" value = "frenchCusine">American</li>
+         	<li><input type = "checkbox" id  = "American" class = "filterElement cusineFilter" value = "italianCusine">American</li>
+         	<li><input type = "checkbox" id  = "American" value = "3" class = "filterElement cusineFilter">American</li>
+         	<li><input type = "checkbox" id  = "American" value = "0" class = "filterElement cusineFilter">American</li>
+         	<li><input type = "checkbox" id  = "American" value = "0" class = "filterElement cusineFilter">American</li>
+         	<li><input type = "checkbox" id  = "American" value = "0" class = "filterElement cusi neFilter">American</li>
+         	<li><input type = "checkbox" id  = "American" class = "filterElement cusineFilter" value = "0">American</li>
+         	<li><input type = "checkbox" id  = "American" class = "filterElement cusineFilter" value = "0">American</li>
+         	<li><input type = "checkbox" id  = "American" class = "filterElement cusineFilter" value = "0">American</li>
+        </div>
+        <hr>
+        <h3>Features</h3>
+        <div class="panel panel-default">
+         	<li><input type = "checkbox" id  = "American" class = "filterElement featureFilter" value = "0">A/C</li>
+         	<li><input type = "checkbox" id  = "American" class = "filterElement featureFilter" value = "0">Happy Hours</li>
+         	<li><input type = "checkbox" id  = "American" class = "filterElement featureFilter" value = "0">Serves Alcohol</li>
+         	<li><input type = "checkbox" id  = "American" class = "filterElement featureFilter" value = "0">WiFi</li>
+    
+        </div>
+
+        <hr>
+{% endblock %}
+{% block pageBody %}
+{% for each in reviews %}
+	<div class="row">
+      <div class="col-xs-12 col-md-12 col-sm-12">
+        <h4><a href="/restaurants/viewrestaurant/{{each.restaurantObject.id}}/">{{each.name}}</a></h4>
+   
+        <h5><a href="">{{each.comment.reviewedBy.username}}</a></h5>
+        
+        <p>
+        <strong>Rated </strong>{{each.comment.reviewRating}}
+        <br>
+        {{each.comment.reviewText}}
+        </p>
+        
+        <p class="pull-right"><a href="#"><i class="glyphicon glyphicon-share"></i> Share</a></p>
+
+        <ul class="list-inline">
+        <li><a href="#">{{each.comment.reviewedOn | date}}</a></li>
+        <li><a href="#"><i class="glyphicon glyphicon-comment"></i> {{each.comment.reviewreply_set.count}} Comments</a></li>
+        <li><a href = "#"><i class = "glyphicon glyphicon-thumbs-up"></i>  {{each.comment.likeCount}} Likes</a></li>
+        <li></li></ul>
+      </div>
+ </div>
+    <hr>
+
+{% endfor %}
+{% endblock %}
+
+{% block rightPanel %}
+	<div class="panel panel-default">
+         	<div class="panel-heading">Popular Restaurants in {{location}} </div>
+         	<div class="panel-body">Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan. 
+            Aliquam in felis sit amet augue.</div>
+    </div>
+        <hr>
+        
+    <div class="panel panel-default">
+         	<div class="panel-heading">Top Foodies</div>
+         	<div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate. 
+            Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis 
+            dolor, in sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan. 
+            Aliquam in felis sit amet augue.</div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+	$(document).ready(function(){
+		filterList = [];
+		
+	});
+
+	$('.filterElement').click(function(){
+		var cusineFilters = $('input.cusineFilter:checkbox:checked').map(function() {
+    			return this.value;
+}).get();
+		var featureFilters = $('input.featureFilter:checkbox:checked').map(function(){
+			return this.value;
+		}).get();
+		
+		cusineFilters = JSON.stringify(cusineFilters);
+		featureFilters = JSON.stringify(featureFilters);
+		var location = '{{city}}';
+		$('#cusineFilters').attr('value',cusineFilters);
+		$('#featureFilters').attr('value',featureFilters);
+		$('#location').attr('value',location);
+		console.log(cusineFilters);
+		console.log(featureFilters);
+		console.log("{{city}}");
+		$('#myForm').submit();
+		
+
+	});
+</script>
+{% endblock %}

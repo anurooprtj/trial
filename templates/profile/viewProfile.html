@@ -1,0 +1,536 @@
+{% extends 'main.html' %}
+{% load staticfiles %}
+
+<!-- left panel -->
+{% block sidePanel %}
+    {% if profileObject.profilePicture %}
+    <img style = "width:100px;" src="{{profileObject.profilePicture.url}}">
+    {% else %}
+    <img style = "width=8%;" src="{% static 'images/anon_user.png' %}">
+    {% endif %}
+
+
+
+<h3 class="text-info">{{profileObject.firstName}}</h3>
+<hr>
+<div class="panel panel-default">
+<ul id = "leftLink" class="list-unstyled">
+	<li id = "basicInfoButton"><a>Basic Information</a></li>
+	<li id = "accountSettingsButton"><a> Account Settings</a></li>
+	<li id = "termsOfServiceButton"><a>Terms of Service</a></li>
+</ul>
+
+</div>
+
+
+<div class="panel panel-default">
+<ul id = "leftLink" class="list-unstyled">
+	<li id = "reviewsButton"><a>Reviews({{profileObject.userObject.restaurantreview_set.count}})</a></li>
+	<li id = "beeninButton"><a>Been in({{profileObject.checkincounter_set.count}})</a></li>
+	<li id = "photoButton"><a>Photos({{profileObject.userObject.reviewimages_set.count}})</a></li>
+	<li id = "followersButton"><a>Followers({{profileObject.followersCount}})</a></li>
+	<li id = "ratingButton"><a>Ratings</a></li>
+	<li id = "pinButton"><a>Pins</a></li>
+
+</ul>
+
+</div>
+
+
+{% endblock %}
+
+
+<!-- main body -->
+{% block pageBody%}
+    
+{% if noprofile %}
+<div id = "basicInfo" class = "container">
+	<h3 class="text-danger">{{noprofile}}..create now..</h3>
+	<form action = "/profiles/saveBasic/" method = "POST" class = "form-inline" enctype = "multipart/form-data">
+		{% csrf_token %}
+		<div class = "form-group">
+		<label for = "firstname">First Name</label>
+		<input type = "text" class = "form-control" value = "{{profile.firstName}}" name = "firstname" placeholder = "{{profileObject.firstName}}">
+					
+		
+		</div>
+		<div class="form-group">
+			<label for = "midddlename">Middle Name:</label>
+			<input type="text" value = "{{profile.middleName}}" class = "form-control" name = "middlename" placeholder = "{{profileObject.middleName}}">
+			
+		</div>
+		<p>
+		</p>
+		<div class="form-group">
+			<label for="lastaname">Last Name:</label>
+			<input type = "text" value = "{{profile.lastName}}" class="form-control" name = "lastname" placeholder = "{{profileObject.Lastname}}">
+		</div>
+		<p></p>
+		<div class = "form-group">
+			<label for = "profileImage">Profile Picture</label>
+			<input type="file" name = "profilePic" class = "form-control">
+		</div>
+		<p></p>
+		<button type = "submit" class = "btn btn-success" id = "nameSave">Save</button>
+	</form>
+				<p></p>
+				<form action  = "/profiles/savePhone/" method  = "POST" class = "form-inline" enctype="multipart/form-data">
+				{% csrf_token %}
+				<div class = "form-group">
+				
+				<label for = "contact">Contact No</label>
+				<input type = "text" name = "contact"  class = "form-control"   id = "phoneNumber" value="{{profile.phoneNumber}}" placeholder = "{{profileObject.phoneNumber}}"></input>
+				</div>
+
+				
+				<input type = "button" id = "verifyPhone" class = "btn btn-info" value = "Verify Phone Number">
+				<p></p>
+				<button type = "submit" class = "btn btn-success" id = "contactinfoSave">Save</button>
+				&nbsp;<a class = "btn btn-warning" href = "/thefoodjoint/accounts/profile/">Cancel</a>
+				</form>
+			</div>
+
+      {% else %}
+                   <div id="basicInfo" class="container">
+                   {% block profileinfo%}
+                   
+                             <h3 class="text-info">basic info</h3>
+
+                                        {% block basicinfo %}
+
+                                       <h4 class="text-warning">First Name:<strong>{{profileObject.firstName}} </strong></h4>
+                                       	 <h4 class="text-warning">Middle Name:<strong>{{profileObject.middleName}} </strong></h4>
+                                       	  <h4 class="text-warning">Last Name:<strong>{{profileObject.lastName}} </strong></h4>
+                                       	   <h4 class="text-warning">Phone:<strong>{{profileObject.phoneNumber}} </strong></h4>	
+
+                                         {% endblock%}
+
+
+
+
+
+
+
+
+
+                             <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#editform">Edit</button>
+
+                             <div id="editform" class="modal fade" role="dialog">
+                                             <div class="modal-dialog">
+
+                                               <!-- Modal content-->
+                                             <div class="modal-content">
+                                                    <div class="modal-header">
+                                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h4 class="modal-title">Edit basic info... </h4>
+                                                    </div>
+                                                  <div class="modal-body">
+                                                  
+
+
+                                                            <form action = "/profiles/saveBasic/" method = "POST" class = "form-inline" enctype = "multipart/form-data">{% csrf_token %}
+		<div class = "form-group">
+		<label for = "firstname">First Name</label>
+		<input type = "text" class = "form-control" value = "{{profile.firstName}}" name = "firstname" placeholder = "{{profileObject.firstName}}">
+					
+		
+		</div>
+		<div class="form-group">
+			<label for = "midddlename">Middle Name:</label>
+			<input type="text" value = "{{profile.middleName}}" class = "form-control" name = "middlename" placeholder = "{{profileObject.middleName}}">
+			
+		</div>
+		<p>
+		</p>
+		<div class="form-group">
+			<label for="lastaname">Last Name:</label>
+			<input type = "text" value = "{{profile.lastName}}" class="form-control" name = "lastname" placeholder = "{{profileObject.Lastname}}">
+		</div>
+		<p></p>
+		<div class = "form-group">
+			<label for = "profileImage">Profile Picture</label>
+			<input type="file" name = "profilePic" class = "form-control">
+		</div>
+		<p></p>
+		<button type = "submit" class = "btn btn-success" id = "nameSave">Save</button>
+		<button type = "button" class = "btn btn-danger" data-dismiss="modal">Cancel</button>
+	</form>
+
+
+
+
+
+
+
+
+                                                    </div>
+                                                 <div class="modal-footer">
+                                                 
+                                                </div>
+                                                  </div>
+                                                 </div>
+                             </div>
+
+
+
+
+
+                   {% endblock %}
+               </div>
+
+
+
+              <div id="reviewInfo" class="profileinfo">
+              	           <h1 class="text-warning"><strong>Reviews you Posted....</strong></h1><br>
+              	            <ul>
+              	            	{% for each in profileObject.userObject.restaurantreview_set.all %}
+                                <div class="well">
+                                <p> Review:<strong class="text-info"> <a href="{% url 'reviews:reviewfull' each.id each.reviewOn.id %}">{{each.reviewText }}</a></strong> </p>
+                                <p> Review on:<strong class="text-info"><a href="/restaurants/viewrestaurant/{{each.reviewOn.id}}">{{each.reviewOn.restaurantName}}</a></strong></p>
+                                <p> Posted On:<strong class="text-info">{{each.reviewedOn}}</strong></p>
+                                <p>Likes:<strong class="text-info">{{each.likeCount}}</strong></p>
+                                <p>Images:</p><br>
+                               
+                                 {% for img in each.reviewimages_set.all|slice:":3" %}
+                                 <img src="{{img.ReviewImage.url}}" width="150">
+                                 {% endfor %}
+                                 {% if each.reviewimages_set.count > 3%}
+                                 <a href="#">   More.......</a>
+                                 {% endif%}
+                                </div>
+              	            	{% endfor %}
+              	            	
+              	            </ul>
+              </div>
+
+              
+
+              <div id="photoInfo" class="profileinfo">
+              	<h1 class="text-warning">Photos you Posted..</h1>
+              	<br>
+              	<div class="well">
+              		{% for img in profileObject.userObject.reviewimages_set.all %}
+              		<img src="{{img.ReviewImage.url}}" width="170">
+              		{% endfor%}
+              	</div>
+              </div>
+
+
+             <div id="beeninInfo" class="profileinfo">
+              	<h1 class="text-danger">Been in......</h1>
+              	       {% for each in profileObject.checkincounter_set.all %}
+              	            <div class="well">
+              	  	         <p> Restaurant:<strong class="text-info"> <a href="/restaurants/viewrestaurant/{{each.restaurant.id}}">{{each.restaurant.restaurantName}}</a></strong> </p>
+              	  	         <p>Checked in <strong class="text-info">{{each.checkInCount}}</strong> times..</p>
+
+              	            </div>
+              	      {% endfor %}
+
+
+              </div>
+
+
+              <div id="followersInfo" class="profileinfo">
+              	   <h1 class="text-success">Followin u....</h1>
+              	   {% for each in profileObject.follow.all %}
+              	    <div class="well">
+              	      {{each.userObject.username}}
+              	  </div>
+              	   {% endfor %}
+
+              	   <h1 class="text-warning">U r followin...</h1>
+              	   {% for each in profileObject.follows.all %}
+              	   <div class="well">
+              	   	{{each.userObject.username}}
+              	   </div> 
+              	   {% endfor %}
+              </div>
+
+              <div id="ratingInfo" class="profileinfo">
+              	ratingInformation......
+              </div>
+
+              <div id="pinInfo" class="profileinfo">
+              	pinInformation......
+              </div>
+
+
+                 
+      {% endif %}
+
+			<div id = "accountSettings" class = "container">
+			<h3>Account Settings</h3>
+		
+
+				<h4>Change Password</h4>
+				<form action = "/accounts/password/change/" method = "POST" class = "form-inline">
+				{% csrf_token %}
+				<div class = "form-group">
+				<label for = "current">Current Password</label>
+				<input type = "password" class = "form-control" name = "oldpassword"  placeholder = "Current Password" required>
+				</div>
+				<p></p>
+				<div class = "form-group">
+				
+				<label class = "control-label" for = "new">New Password</label>
+				<input type = "password" name = "password1"  class = "form-control" placeholder = "newpassword" id = "password" required>
+				</div>
+				
+				<div class = "form-group" id = "confirmDiv">
+				
+				<label for = "confirm_password" class = "control-label">Confirm Password</label>
+				<input type = "password" name = "password2"  class = "form-control" placeholder = "Confirm Password" id = "confirm_password" required>
+
+				</div>
+				
+				<div>
+				<br>	
+				<button type = "submit" class = "btn btn-success" id = "passwordChange">Save</button>
+				&nbsp;<a class = "btn btn-warning" href = "/profiles/delete/">Cancel</a>
+				</div>
+				</form>	
+
+				<h4>Delete Account</h4>
+				<button class= "btn btn-danger" href = "/profiles/delete/">Delete My Account</button>
+			</div>
+        
+
+
+			<div id = "termsOfService" class = "container col-md-12">
+			<h3>Terms of service</h3>
+			<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text 
+			ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only
+ 			five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 
+			1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing 
+			software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+			</div>
+
+          
+
+     
+	
+{% endblock %}
+
+
+<!-- right panel -->
+{% block rightPanel %}
+
+{% endblock %}
+
+
+{% block styles %}
+<style type = "text/css">
+	a:hover{
+		text-decoration:none;
+	}	
+	#leftLink li{	
+	padding-top:.5em;
+	padding-bottom:.5em;
+	
+	}
+	
+	#leftLink li{
+		padding:.3em;
+	}
+	#leftLink li:hover{
+		
+		cursor:pointer;
+		
+		background-color:#999999;
+	}
+	
+#accountSettings{
+	padding-bottom:2em;
+}
+#termsOfService{
+	padding-bottom:2em;
+}
+#basicInfo{
+	padding-top:2em;
+}
+
+.profileinfo
+{
+	padding-top:2em;
+}	
+    </style>
+	
+{% endblock %}
+
+{% block scripts %}
+<script src = "{% static 'js/verify2.js' %}"></script>
+
+<script type="text/javascript">
+    
+    
+
+
+    $(document).ready(function(){
+    var verifyButton = document.getElementById("verifyPhone");
+	$('#passwordChange').prop("disabled", true);
+    $('#accountSettings').css('display','none'); 
+	$('#termsOfService').css('display','none');
+    $('#reviewInfo').css('display','none');	
+    $('#beeninInfo').css('display','none');	
+    $('#followersInfo').css('display','none');	
+    $('#pinInfo').css('display','none');
+    $('#ratingInfo').css('display','none');	
+    $('#photoInfo').css('display','none');
+	$('#contactinfoSave').prop("disabled", true);
+
+        
+
+
+
+      $('#basicInfoButton').click(function(){
+		$('#accountSettings').css('display','none'); 
+		$('#termsOfService').css('display','none');
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','none');	
+        $('#followersInfo').css('display','none');	
+        $('#pinInfo').css('display','none');
+        $('#photoInfo').css('display','none');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','inherit');
+		
+	});
+     $('#accountSettingsButton').click(function(){
+		$('#accountSettings').css('display','inherit'); 
+		$('#termsOfService').css('display','none');
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','none');	
+        $('#photoInfo').css('display','none');
+        $('#followersInfo').css('display','none');	
+        $('#pinInfo').css('display','none');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','none');
+	});
+    $('#termsOfServiceButton').click(function(){
+		$('#accountSettings').css('display','none'); 
+		$('#termsOfService').css('display','inherit');
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','none');	
+        $('#photoInfo').css('display','none');
+        $('#followersInfo').css('display','none');	
+        $('#pinInfo').css('display','none');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','none');
+
+	});	
+
+$('#reviewsButton').click(function(){
+	$('#accountSettings').css('display','none'); 
+		$('#termsOfService').css('display','none');
+        $('#reviewInfo').css('display','inherit');
+        $('#beeninInfo').css('display','none');	
+        $('#followersInfo').css('display','none');	
+        $('#photoInfo').css('display','none');
+        $('#pinInfo').css('display','none');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','none');
+		
+	});	
+
+$('#beeninButton').click(function(){
+	$('#accountSettings').css('display','none'); 
+		$('#termsOfService').css('display','none');
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','inherit');	
+        $('#followersInfo').css('display','none');	
+        $('#photoInfo').css('display','none');
+        $('#pinInfo').css('display','none');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','none');
+		
+	});
+
+$('#followersButton').click(function(){
+	$('#accountSettings').css('display','none'); 
+		$('#termsOfService').css('display','none');
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','none');	
+        $('#followersInfo').css('display','inherit');	
+        $('#photoInfo').css('display','none');
+        $('#pinInfo').css('display','none');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','none');
+		
+	});
+$('#pinButton').click(function(){
+	$('#accountSettings').css('display','none'); 
+		$('#termsOfService').css('display','none');
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','none');	
+        $('#photoInfo').css('display','none');
+        $('#followersInfo').css('display','none');	
+        $('#pinInfo').css('display','inherit');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','none');
+		
+	});
+
+$('#ratingButton').click(function(){
+	$('#accountSettings').css('display','none'); 
+		$('#termsOfService').css('display','none');
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','none');	
+        $('#photoInfo').css('display','none');
+        $('#followersInfo').css('display','none');	
+        $('#pinInfo').css('display','none');
+        $('#ratingInfo').css('display','inherit');	
+		$('#basicInfo').css('display','none');
+		
+	});
+
+
+$('#photoButton').click(function(){
+	$('#accountSettings').css('display','none'); 
+		$('#termsOfService').css('display','none');
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','none');	
+        $('#photoInfo').css('display','inherit');
+        $('#followersInfo').css('display','none');	
+        $('#pinInfo').css('display','none');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','none');
+		
+	});
+	var password = document.getElementById("password"),
+    	confirm_password = document.getElementById("confirm_password");
+    	password.onchange = validatePassword;
+    	confirm_password.onkeyup = validatePassword;
+	function validatePassword() {
+		var parent = document.getElementById('confirmDiv');
+
+  		if (password.value != confirm_password.value) {
+			parent.className = "form-group has-error has-feedback";
+				$('#passwordChange').prop("disabled", true);
+
+    
+  		} else {
+			parent.className = "form-group has-success has-feedback";
+			$('#passwordChange').prop("disabled", false);
+    
+  		}
+	}
+
+
+	verifyButton.onclick = function(){
+			
+			var phoneNumber = document.getElementById("phoneNumber").value;
+			var verification = verifyNumber(phoneNumber);
+			if(verification){
+					$('#contactinfoSave').prop("disabled", false);
+					var verifiedButton = document.getElementById("verifyPhone");
+					verifiedButton.value = "Verified";
+			}
+			else{
+					alert("sorry Code error !");
+				
+			}	
+		};
+    });
+    
+
+    </script>	
+{% endblock %}

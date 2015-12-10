@@ -1,0 +1,310 @@
+
+{% extends 'main.html' %}
+{% load staticfiles %}
+
+{% block sidePanel %}
+
+       {% if profileObject.profilePicture %}
+          <img style = "width :150px;" src="{{profileObject.profilePicture.url}}">
+       {% else %}
+        <img style="width:150px;" src="{% static 'images/anon_user.png' %}">
+       {% endif %}      
+<h3>{{profileObject.firstName}}</h3>
+
+{% if request.user.is_active %}
+     {% if userprofileObject == profileObject %}
+     {% else %}
+            {% if profileObject not in userprofileObject.follows.all %}
+             <a href="{% url 'profiles:followher' profileObject.id %}">
+             <span class="glyphicon glyphicon-eye-open"></span>
+             follow the guy
+             </a>
+            {% else %}
+             <p class="text-success">Following</p>
+             <a href="{% url 'profiles:unfollowhim' profileObject.id %}">
+              <span class="glyphicon glyphicon-eye-close"></span>
+              unfollow
+              {% endif %}
+    {% endif%}
+{% else %}
+<a href="/accounts/login">
+          <span class="glyphicon glyphicon-eye-open"></span>
+          follow the guy
+          </a>
+{% endif %}          
+
+
+
+
+<hr>
+<div class="panel panel-default">
+<ul id = "leftLink" class="list-unstyled">
+	<li id = "basicInfoButton"><a>Basic Information</a></li>
+	<li id = "reviewsButton"><a>Reviews({{profileObject.userObject.restaurantreview_set.count}})</a></li>
+	<li id = "beeninButton"><a>Been in({{profileObject.checkincounter_set.count}})</a></li>
+	<li id = "photoButton"><a>Photos({{profileObject.userObject.reviewimages_set.count}})</a></li>
+	<li id = "followersButton"><a>Followers({{profileObject.followersCount}})</a></li>
+	<li id = "ratingButton"><a>Ratings</a></li>
+</ul>
+
+</div>
+
+{% endblock %}
+
+
+{% block pageBody%}
+
+
+<div id="basicInfo" class="profileInfo">
+<h3 class="text-info">basic info</h3>
+   <h4 class="text-warning">First Name:<strong>{{profileObject.firstName}} </strong></h4>
+   <h4 class="text-warning">Middle Name:<strong>{{profileObject.middleName}} </strong></h4>
+   <h4 class="text-warning">Last Name:<strong>{{profileObject.lastName}} </strong></h4>
+   <h4 class="text-warning">Phone:<strong>{{profileObject.phoneNumber}} </strong></h4>
+</div>   	
+
+                                        
+
+	    
+
+ <div id="reviewInfo" class="profileinfo">
+              	           <h1 class="text-warning"><strong>Reviews</strong></h1><br>
+              	            <ul>
+              	            	{% for each in profileObject.userObject.restaurantreview_set.all %}
+                                <div class="well">
+                                <p> Review:<strong class="text-info"> <a href="{% url 'reviews:reviewfull' each.id each.reviewOn.id %}">{{each.reviewText }}</a></strong> </p>
+                                <p> Review on:<strong class="text-info"><a href="/restaurants/viewrestaurant/{{each.reviewOn.id}}">{{each.reviewOn.restaurantName}}</a></strong></p>
+                                <p> Posted On:<strong class="text-info">{{each.reviewedOn}}</strong></p>
+                                <p>Likes:<strong class="text-info">{{each.likeCount}}</strong></p>
+                                <p>Images:</p><br>
+                               
+                                 {% for img in each.reviewimages_set.all|slice:":3" %}
+                                 <img src="{{img.ReviewImage.url}}" width="150">
+                                 {% endfor %}
+                                 {% if each.reviewimages_set.count > 3%}
+                                 <a href="#">   More.......</a>
+                                 {% endif%}
+                                </div>
+              	            	{% endfor %}
+              	            	
+              	            </ul>
+              </div>
+
+
+  
+<div id="photoInfo" class="profileinfo">
+              	<h1 class="text-warning">Photos</h1>
+              	<br>
+              	<div class="well">
+              		{% for img in profileObject.userObject.reviewimages_set.all %}
+              		<img src="{{img.ReviewImage.url}}" width="170">
+              		{% endfor%}
+              	</div>
+</div>
+
+
+
+ <div id="beeninInfo" class="profileinfo">
+              	<h1 class="text-danger">Been in......</h1>
+              	       {% for each in profileObject.checkincounter_set.all %}
+              	            <div class="well">
+              	  	         <p> Restaurant:<strong class="text-info"> <a href="/restaurants/viewrestaurant/{{each.restaurant.id}}">{{each.restaurant.restaurantName}}</a></strong> </p>
+              	  	         <p>Checked in <strong class="text-info">{{each.checkInCount}}</strong> times..</p>
+
+              	            </div>
+              	      {% endfor %}
+</div>
+
+
+
+
+<div id="followersInfo" class="profileinfo">
+              	   <h1 class="text-success">Followers</h1>
+              	   {% for each in profileObject.follow.all %}
+              	   <div class="well">
+                    <p> Name:<strong class="text-info"> <a href="{% url 'profiles:viewProfile' each.userObject.username %}">{{each.userObject.username}}</a></strong></p>
+                   </div>
+              	   {% endfor %}
+
+
+                    <h1 class="text-warning">U r followin...</h1>
+                   {% for each in profileObject.follows.all %}
+                   <div class="well">
+                    {{each.userObject.username}}
+                   </div> 
+                   {% endfor %}
+</div>
+
+              
+
+<div id="ratingInfo" class="profileinfo">
+ratingInformation......
+</div>
+
+
+<div id="pinInfo" class="profileinfo">
+pinInformation......
+</div>
+
+
+
+
+
+{% endblock %}
+
+
+
+{% block rightPanel %}
+<div class="panel panel-default">
+<div class="panel panel-heading">
+	{{profileObject.firstName}}'s favourite spots
+</div>
+<div class="panel panel-body"></div>
+</div>
+<hr>
+<div class = "panel panel-default">
+	<div class="panel panel-heading">Recently Checked in at </div>
+	<div class = "panel panel-body">
+	
+		{% for checkin in recentCheckIns %}
+		<a href="/restaurants/viewrestaurant/{{checkin.restaurant}}/
+		">{{checkin.restaurant.restaurantName}}</a>
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+<style type="text/css">
+a:hover{
+		text-decoration:none;
+	}	
+	#leftLink li{	
+	padding-top:.5em;
+	padding-bottom:.5em;
+	
+	}
+	
+	#leftLink li{
+		padding:.3em;
+	}
+	#leftLink li:hover{
+		
+		cursor:pointer;
+		
+		background-color:#999999;
+	}
+	
+
+.profileinfo
+{
+	padding-top:2em;
+}
+
+</style>
+{% endblock %}
+
+
+
+{% block scripts %}
+
+
+<script src = "{% static 'js/verify2.js' %}"></script>
+<script type="text/javascript">
+
+ $(document).ready(function(){
+    $('#reviewInfo').css('display','inherit');	
+    $('#beeninInfo').css('display','none');	
+    $('#followersInfo').css('display','none');	
+    $('#pinInfo').css('display','none');
+    $('#ratingInfo').css('display','none');	
+    $('#photoInfo').css('display','none');
+    $('#basicInfo').css('display','none');
+        
+
+
+      $('#basicInfoButton').click(function(){
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','none');	
+        $('#followersInfo').css('display','none');	
+        $('#pinInfo').css('display','none');
+        $('#photoInfo').css('display','none');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','inherit');
+		
+	});
+
+    	
+
+$('#reviewsButton').click(function(){
+        $('#reviewInfo').css('display','inherit');
+        $('#beeninInfo').css('display','none');	
+        $('#followersInfo').css('display','none');	
+        $('#photoInfo').css('display','none');
+        $('#pinInfo').css('display','none');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','none');
+		
+	});	
+
+$('#beeninButton').click(function(){
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','inherit');	
+        $('#followersInfo').css('display','none');	
+        $('#photoInfo').css('display','none');
+        $('#pinInfo').css('display','none');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','none');
+		
+	});
+
+$('#followersButton').click(function(){
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','none');	
+        $('#followersInfo').css('display','inherit');	
+        $('#photoInfo').css('display','none');
+        $('#pinInfo').css('display','none');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','none');
+		
+	});
+$('#pinButton').click(function(){
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','none');	
+        $('#photoInfo').css('display','none');
+        $('#followersInfo').css('display','none');	
+        $('#pinInfo').css('display','inherit');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','none');
+		
+	});
+
+$('#ratingButton').click(function(){
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','none');	
+        $('#photoInfo').css('display','none');
+        $('#followersInfo').css('display','none');	
+        $('#pinInfo').css('display','none');
+        $('#ratingInfo').css('display','inherit');	
+		$('#basicInfo').css('display','none');
+		
+	});
+
+
+$('#photoButton').click(function(){
+        $('#reviewInfo').css('display','none');
+        $('#beeninInfo').css('display','none');	
+        $('#photoInfo').css('display','inherit');
+        $('#followersInfo').css('display','none');	
+        $('#pinInfo').css('display','none');
+        $('#ratingInfo').css('display','none');	
+		$('#basicInfo').css('display','none');
+		
+	});
+
+});
+
+</script>
+
+{% endblock %}
